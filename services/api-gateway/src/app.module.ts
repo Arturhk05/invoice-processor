@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import configuration from './config/configuration';
-import { envValidationSchema } from './config/env.validation';
+import { APP_PIPE } from '@nestjs/core';
+import configuration from './config/configuration.js';
+import { envValidationSchema } from './config/env.validation.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 @Module({
   imports: [
@@ -15,8 +15,16 @@ import { envValidationSchema } from './config/env.validation';
         abortEarly: false,
       },
     }),
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    },
+  ],
 })
 export class AppModule {}
