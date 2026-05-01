@@ -3,7 +3,10 @@ import * as bcrypt from 'bcryptjs';
 import { User, UserRepository } from '../ports/user.repository.js';
 
 @Injectable()
-export class InMemoryUserRepository extends UserRepository implements OnModuleInit {
+export class InMemoryUserRepository
+  extends UserRepository
+  implements OnModuleInit
+{
   private readonly users = new Map<string, User>();
 
   async onModuleInit(): Promise<void> {

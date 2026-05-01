@@ -35,7 +35,9 @@ export class AuthService {
 
     const refreshToken = this.jwt.sign(payload, {
       secret: this.config.getOrThrow<string>('jwt.refreshSecret'),
-      expiresIn: this.config.getOrThrow<string>('jwt.refreshExpiration') as `${number}${'s' | 'm' | 'h' | 'd'}`,
+      expiresIn: this.config.getOrThrow<string>(
+        'jwt.refreshExpiration',
+      ) as `${number}${'s' | 'm' | 'h' | 'd'}`,
     });
 
     await this.refreshTokens.save(payload.sub, refreshToken);
