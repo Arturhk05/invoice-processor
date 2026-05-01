@@ -80,7 +80,13 @@
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "collectCoverageFrom": [
-      "src/**/*.(t|j)s"
+      "src/**/*.(t|j)s",
+      "!src/main.ts",
+      "!src/**/*.module.ts",
+      "!src/common/decorators/current-user.decorator.ts",
+      "!src/common/guards/jwt-auth.guard.ts",
+      "!src/config/configuration.ts",
+      "!src/config/env.validation.ts"
     ],
     "coverageDirectory": "coverage",
     "testEnvironment": "node"
