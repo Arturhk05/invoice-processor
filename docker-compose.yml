@@ -1,0 +1,11 @@
+services:
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      target: development
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./services/api-gateway/.env
+    volumes:
+      - ./services/api-gateway/src:/app/src
