@@ -65,7 +65,6 @@ services/api-gateway/
 │   └── main.ts
 ├── test/
 │   ├── unit/
-│   ├── integration/
 │   └── e2e/
 ├── Dockerfile
 └── package.json
