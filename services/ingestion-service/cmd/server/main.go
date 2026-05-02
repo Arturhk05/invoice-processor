@@ -15,6 +15,9 @@ import (
 	"github.com/Arturhk05/invoice-processor/services/ingestion-service/internal/infrastructure/postgres"
 	"github.com/Arturhk05/invoice-processor/services/ingestion-service/internal/infrastructure/rabbitmq"
 	"github.com/Arturhk05/invoice-processor/services/ingestion-service/pkg/logger"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -44,6 +47,15 @@ func main() {
 	if err := pool.Ping(context.Background()); err != nil {
 		log.Fatal("postgres: ping failed", zap.Error(err))
 	}
+
+	mg, err := migrate.New("file://migrations", cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal("migrations: init failed", zap.Error(err))
+	}
+	if err := mg.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		log.Fatal("migrations: up failed", zap.Error(err))
+	}
+	log.Info("migrations applied")
 
 	amqpConn, err := amqp.Dial(cfg.RabbitMQURL)
 	if err != nil {
