@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../../src/app.module';
+import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication<App>;
@@ -17,6 +18,7 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
+    app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
     );
@@ -41,13 +43,19 @@ describe('Auth (e2e)', () => {
       });
     });
 
-    it('returns 401 on wrong password', async () => {
+    it('returns 401 with error shape on wrong password', async () => {
       const res = await request(app.getHttpServer()).post('/auth/login').send({
         email: 'admin@invoice-processor.com',
         password: 'wrongpassword',
       });
 
       expect(res.status).toBe(401);
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: expect.any(String),
+        timestamp: expect.any(String),
+        path: '/auth/login',
+      });
     });
 
     it('returns 401 on unknown email', async () => {
