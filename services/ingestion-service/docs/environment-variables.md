@@ -4,12 +4,13 @@ Copy `.env.example` to `.env` before running.
 
 ## Reference
 
-| Variable             | Type    | Required | Default    | Description                                   |
-|----------------------|---------|----------|------------|-----------------------------------------------|
-| `PORT`               | integer | No       | `8080`     | HTTP server port                              |
-| `DATABASE_URL`       | string  | **Yes**  | —          | PostgreSQL connection string                  |
-| `RABBITMQ_URL`       | string  | **Yes**  | —          | RabbitMQ connection string (AMQP)             |
-| `RABBITMQ_EXCHANGE`  | string  | No       | `invoices` | Exchange name for publishing invoice events   |
+| Variable            | Type                                    | Required | Default       | Description                                 |
+| ------------------- | --------------------------------------- | -------- | ------------- | ------------------------------------------- |
+| `APP_ENV`           | `development` \| `production` \| `test` | No       | `development` | Runtime environment — controls log format   |
+| `PORT`              | integer                                 | No       | `8080`        | HTTP server port                            |
+| `DATABASE_URL`      | string                                  | **Yes**  | —             | PostgreSQL connection string                |
+| `RABBITMQ_URL`      | string                                  | **Yes**  | —             | RabbitMQ connection string (AMQP)           |
+| `RABBITMQ_EXCHANGE` | string                                  | No       | `invoices`    | Exchange name for publishing invoice events |
 
 ## Notes
 
