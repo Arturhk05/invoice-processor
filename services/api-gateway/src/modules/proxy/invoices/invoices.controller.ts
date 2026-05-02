@@ -30,12 +30,16 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto.js';
 @ApiBearerAuth()
 export class InvoicesController {
   private readonly ingestionUrl: string;
+  private readonly internalToken: string;
 
   constructor(
     private readonly http: HttpService,
     private readonly config: ConfigService,
   ) {
     this.ingestionUrl = this.config.getOrThrow<string>('ingestion.url');
+    this.internalToken = this.config.getOrThrow<string>(
+      'ingestion.internalToken',
+    );
   }
 
   @Post()
@@ -52,7 +56,9 @@ export class InvoicesController {
   async submit(@Body() dto: CreateInvoiceDto): Promise<unknown> {
     try {
       const response = await firstValueFrom(
-        this.http.post(`${this.ingestionUrl}/invoices`, dto),
+        this.http.post(`${this.ingestionUrl}/invoices`, dto, {
+          headers: { 'X-Internal-Token': this.internalToken },
+        }),
       );
       return response.data;
     } catch (err) {

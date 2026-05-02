@@ -21,15 +21,6 @@ describe('Invoices (e2e)', () => {
   let mockPost: jest.Mock;
 
   beforeAll(async () => {
-    process.env.JWT_SECRET = 'test-secret-key-min-32-characters-long';
-    process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-min-32-chars-long';
-    process.env.RABBITMQ_URL = 'amqp://guest:guest@localhost:5672';
-    process.env.INGESTION_SERVICE_URL = 'http://ingestion:8080';
-    process.env.PROXY_TIMEOUT_MS = '100';
-    process.env.THROTTLE_LIMIT = '1000';
-    process.env.THROTTLE_LOGIN_LIMIT = '1000';
-    process.env.THROTTLE_REFRESH_LIMIT = '1000';
-
     mockPost = jest.fn();
 
     const module = await Test.createTestingModule({
@@ -216,7 +207,7 @@ describe('Invoices (e2e)', () => {
         expect(res.body).toEqual(ingestionResponse);
       });
 
-      it('forwards only whitelisted fields to ingestion service', async () => {
+      it('forwards only whitelisted fields with internal token header to ingestion service', async () => {
         mockPost.mockReturnValueOnce(
           of({ data: {}, status: 202 } as AxiosResponse),
         );
@@ -229,6 +220,11 @@ describe('Invoices (e2e)', () => {
         expect(mockPost).toHaveBeenCalledWith(
           'http://ingestion:8080/invoices',
           validDto,
+          {
+            headers: {
+              'X-Internal-Token': 'e2e-test-internal-token-abcdef123456',
+            },
+          },
         );
       });
 

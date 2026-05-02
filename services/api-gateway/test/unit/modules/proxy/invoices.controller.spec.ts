@@ -23,9 +23,14 @@ const makeHttp = (
 
 const makeConfig = (
   url = 'http://ingestion:8080',
+  token = 'test-internal-token',
 ): jest.Mocked<ConfigService> =>
   ({
-    getOrThrow: jest.fn().mockReturnValue(url),
+    getOrThrow: jest.fn().mockImplementation((key: string) => {
+      if (key === 'ingestion.url') return url;
+      if (key === 'ingestion.internalToken') return token;
+      throw new Error(`unexpected config key: ${key}`);
+    }),
   }) as unknown as jest.Mocked<ConfigService>;
 
 const makeController = (
@@ -36,9 +41,9 @@ const makeController = (
 
 describe('InvoicesController', () => {
   describe('submit', () => {
-    it('forwards dto to ingestion service and returns response data', async () => {
+    it('forwards dto to ingestion service with internal token header', async () => {
       const http = makeHttp({ id: 'abc-123' });
-      const config = makeConfig('http://ingestion:8080');
+      const config = makeConfig('http://ingestion:8080', 'my-secret');
       const controller = makeController(http, config);
 
       const result = await controller.submit(dto);
@@ -46,16 +51,18 @@ describe('InvoicesController', () => {
       expect(http.post).toHaveBeenCalledWith(
         'http://ingestion:8080/invoices',
         dto,
+        { headers: { 'X-Internal-Token': 'my-secret' } },
       );
       expect(result).toEqual({ id: 'abc-123' });
     });
 
-    it('reads ingestion url from config on construction', () => {
-      const config = makeConfig('http://custom-host:9090');
+    it('reads ingestion url and internal token from config on construction', () => {
+      const config = makeConfig('http://custom-host:9090', 'token-abc');
       const http = makeHttp();
       makeController(http, config);
 
       expect(config.getOrThrow).toHaveBeenCalledWith('ingestion.url');
+      expect(config.getOrThrow).toHaveBeenCalledWith('ingestion.internalToken');
     });
 
     it('propagates http status from ingestion 4xx response', async () => {

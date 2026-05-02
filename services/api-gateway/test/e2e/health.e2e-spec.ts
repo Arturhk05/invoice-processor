@@ -8,11 +8,6 @@ describe('Health (e2e)', () => {
   let app: INestApplication<App>;
 
   beforeAll(async () => {
-    process.env.JWT_SECRET = 'test-secret-key-min-32-characters-long';
-    process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-min-32-chars-long';
-    process.env.RABBITMQ_URL = 'amqp://guest:guest@localhost:5672';
-    process.env.INGESTION_SERVICE_URL = 'http://localhost:8080';
-
     const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
