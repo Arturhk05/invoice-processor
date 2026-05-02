@@ -104,6 +104,17 @@ Content-Type: application/json
 
 **408 Request Timeout** — Ingestion Service did not respond within `PROXY_TIMEOUT_MS`
 
+**409 Conflict** — invoice with this `accessKey` already exists (passed through from Ingestion Service)
+
+```json
+{
+  "error": "invoice already exists",
+  "id":    "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**422 Unproessable Enctity** — Ingestion Service rejected the payload (passed through)
+
 **429 Too Many Requests** — rate limit exceeded
 
 ---

@@ -51,7 +51,15 @@ export class InvoicesController {
   @ApiResponse({ status: 202, description: 'Invoice accepted for processing' })
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({
+    status: 409,
+    description: 'Invoice with this accessKey already exists',
+  })
   @ApiResponse({ status: 408, description: 'Ingestion Service timeout' })
+  @ApiResponse({
+    status: 422,
+    description: 'Ingestion Service rejected the payload',
+  })
   @ApiResponse({ status: 429, description: 'Too many requests' })
   async submit(@Body() dto: CreateInvoiceDto): Promise<unknown> {
     try {
