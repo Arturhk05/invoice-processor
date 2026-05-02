@@ -14,6 +14,7 @@ type Config struct {
 	DatabaseURL      string
 	RabbitMQURL      string
 	RabbitMQExchange string
+	InternalToken    string
 }
 
 func Load() (*Config, error) {
@@ -23,6 +24,7 @@ func Load() (*Config, error) {
 		DatabaseURL:      os.Getenv("DATABASE_URL"),
 		RabbitMQURL:      os.Getenv("RABBITMQ_URL"),
 		RabbitMQExchange: getEnv("RABBITMQ_EXCHANGE", "invoices"),
+		InternalToken:    os.Getenv("INTERNAL_TOKEN"),
 	}
 
 	if raw := os.Getenv("PORT"); raw != "" {
@@ -44,6 +46,9 @@ func Load() (*Config, error) {
 	}
 	if cfg.RabbitMQURL == "" {
 		missing = append(missing, "RABBITMQ_URL")
+	}
+	if cfg.InternalToken == "" {
+		missing = append(missing, "INTERNAL_TOKEN")
 	}
 	if len(missing) > 0 {
 		return nil, fmt.Errorf("missing required environment variables: %s", strings.Join(missing, ", "))

@@ -21,4 +21,5 @@ export const envValidationSchema = Joi.object({
 
   INGESTION_SERVICE_URL: Joi.string().uri().required(),
   PROXY_TIMEOUT_MS: Joi.number().integer().positive().default(5000),
+  INGESTION_INTERNAL_TOKEN: Joi.string().required().min(32),
 });

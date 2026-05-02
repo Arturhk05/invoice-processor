@@ -18,6 +18,7 @@ export default () => ({
   },
   ingestion: {
     url: process.env.INGESTION_SERVICE_URL,
+    internalToken: process.env.INGESTION_INTERNAL_TOKEN,
   },
   proxy: {
     timeoutMs: parseInt(process.env.PROXY_TIMEOUT_MS ?? '5000', 10),

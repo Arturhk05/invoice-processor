@@ -18,6 +18,7 @@ func validEnv(t *testing.T) {
 	withEnv(t,
 		"DATABASE_URL", "postgres://user:pass@localhost/db",
 		"RABBITMQ_URL", "amqp://guest:guest@localhost:5672",
+		"INTERNAL_TOKEN", "supersecrettoken1234567890abcdef",
 	)
 }
 
@@ -47,6 +48,7 @@ func TestLoad_reads_all_vars(t *testing.T) {
 		"DATABASE_URL", "postgres://user:pass@db:5432/mydb",
 		"RABBITMQ_URL", "amqp://user:pass@broker:5672",
 		"RABBITMQ_EXCHANGE", "fiscal-events",
+		"INTERNAL_TOKEN", "my-secret-token-abcdef1234567890",
 	)
 
 	cfg, err := config.Load()
@@ -69,10 +71,16 @@ func TestLoad_reads_all_vars(t *testing.T) {
 	if cfg.RabbitMQExchange != "fiscal-events" {
 		t.Errorf("RabbitMQExchange: want fiscal-events, got %q", cfg.RabbitMQExchange)
 	}
+	if cfg.InternalToken != "my-secret-token-abcdef1234567890" {
+		t.Errorf("InternalToken: unexpected value %q", cfg.InternalToken)
+	}
 }
 
 func TestLoad_missing_database_url(t *testing.T) {
-	withEnv(t, "RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
+	withEnv(t,
+		"RABBITMQ_URL", "amqp://guest:guest@localhost:5672",
+		"INTERNAL_TOKEN", "supersecrettoken1234567890abcdef",
+	)
 
 	_, err := config.Load()
 	if err == nil {
@@ -81,7 +89,10 @@ func TestLoad_missing_database_url(t *testing.T) {
 }
 
 func TestLoad_missing_rabbitmq_url(t *testing.T) {
-	withEnv(t, "DATABASE_URL", "postgres://user:pass@localhost/db")
+	withEnv(t,
+		"DATABASE_URL", "postgres://user:pass@localhost/db",
+		"INTERNAL_TOKEN", "supersecrettoken1234567890abcdef",
+	)
 
 	_, err := config.Load()
 	if err == nil {
@@ -89,10 +100,22 @@ func TestLoad_missing_rabbitmq_url(t *testing.T) {
 	}
 }
 
-func TestLoad_missing_both_required(t *testing.T) {
+func TestLoad_missing_internal_token(t *testing.T) {
+	withEnv(t,
+		"DATABASE_URL", "postgres://user:pass@localhost/db",
+		"RABBITMQ_URL", "amqp://guest:guest@localhost:5672",
+	)
+
 	_, err := config.Load()
 	if err == nil {
-		t.Fatal("expected error when both required vars are missing")
+		t.Fatal("expected error for missing INTERNAL_TOKEN")
+	}
+}
+
+func TestLoad_missing_all_required(t *testing.T) {
+	_, err := config.Load()
+	if err == nil {
+		t.Fatal("expected error when all required vars are missing")
 	}
 }
 
