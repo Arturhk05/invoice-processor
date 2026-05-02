@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { isAxiosError } from 'axios';
 import { firstValueFrom } from 'rxjs';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard.js';
 import { TimeoutInterceptor } from '../../../common/interceptors/timeout.interceptor.js';
 import { CreateInvoiceDto } from './dto/create-invoice.dto.js';
@@ -39,6 +40,7 @@ export class InvoicesController {
 
   @Post()
   @HttpCode(HttpStatus.ACCEPTED)
+  @Throttle({ default: {} })
   @UseInterceptors(TimeoutInterceptor)
   @ApiOperation({ summary: 'Submit an invoice for processing' })
   @ApiBody({ type: CreateInvoiceDto })
