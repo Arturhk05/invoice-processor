@@ -1,8 +1,10 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { LoggerModule } from 'nestjs-pino';
 import configuration from './config/configuration.js';
 import { envValidationSchema } from './config/env.validation.js';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 
 @Module({
@@ -15,6 +17,12 @@ import { AuthModule } from './modules/auth/auth.module.js';
         abortEarly: false,
       },
     }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        autoLogging: false,
+        quietReqLogger: true,
+      },
+    }),
     AuthModule,
   ],
   providers: [
@@ -24,6 +32,10 @@ import { AuthModule } from './modules/auth/auth.module.js';
         whitelist: true,
         forbidNonWhitelisted: true,
       }),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })
