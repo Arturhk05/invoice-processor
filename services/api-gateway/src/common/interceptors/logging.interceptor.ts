@@ -5,7 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { Request, Response } from 'express';
 
 interface AuthenticatedRequest extends Request {
@@ -29,17 +29,54 @@ export class LoggingInterceptor implements NestInterceptor {
     res.setHeader('x-request-id', requestId);
 
     return next.handle().pipe(
-      tap(() => {
-        this.logger.info({
+      tap(() =>
+        this.log(
           requestId,
           method,
-          path: url,
-          statusCode: res.statusCode,
-          duration: `${Date.now() - start}ms`,
-          userId: req.user?.id,
+          url,
+          res.statusCode,
+          start,
           ip,
-        });
+          req.user?.id,
+        ),
+      ),
+      catchError((err: unknown) => {
+        const status = this.getStatus(err);
+        this.log(requestId, method, url, status, start, ip, req.user?.id);
+        return throwError(() => err);
       }),
     );
+  }
+
+  private log(
+    requestId: string,
+    method: string,
+    path: string,
+    statusCode: number,
+    start: number,
+    ip: string | undefined,
+    userId?: string,
+  ) {
+    const ms = Date.now() - start;
+    const duration = ms >= 1000 ? `${(ms / 1000).toFixed(2)}s` : `${ms}ms`;
+    const level =
+      statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
+
+    this.logger[level]({
+      requestId,
+      method,
+      path,
+      statusCode,
+      duration,
+      userId,
+      ip,
+    });
+  }
+
+  private getStatus(err: unknown): number {
+    if (err !== null && typeof err === 'object' && 'status' in err) {
+      return (err as { status: number }).status;
+    }
+    return 500;
   }
 }
