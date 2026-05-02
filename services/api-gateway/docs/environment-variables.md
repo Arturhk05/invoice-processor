@@ -15,7 +15,9 @@ Copy `.env.example` to `.env` before running.
 | `THROTTLE_TTL`           | integer                                 | No       | `60`          | Rate limit window in seconds (all routes) |
 | `THROTTLE_LIMIT`         | integer                                 | No       | `100`         | Max requests per window per IP (default)  |
 | `THROTTLE_LOGIN_LIMIT`   | integer                                 | No       | `5`           | Max login attempts per window per IP      |
-| `THROTTLE_REFRESH_LIMIT` | integer                                 | No       | `10`          | Max refresh attempts per window per IP    |
+| `THROTTLE_REFRESH_LIMIT`  | integer                                 | No       | `10`    | Max refresh attempts per window per IP                        |
+| `INGESTION_SERVICE_URL`   | string (URI)                            | **Yes**  | —       | Base URL of the Ingestion Service                             |
+| `PROXY_TIMEOUT_MS`        | integer                                 | No       | `5000`  | Timeout in ms before returning 408 on Ingestion Service calls |
 
 ## Notes
 

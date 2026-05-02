@@ -59,6 +59,69 @@ Include `Authorization: Bearer <accessToken>` header on all protected endpoints.
 
 ---
 
-## Planned
+## Invoices
 
-- `POST /invoices` — submit invoice (proxied to Ingestion Service)
+### POST /invoices
+
+Submit an invoice for processing. Proxied to the Ingestion Service.
+
+```http
+POST /invoices
+Authorization: Bearer <accessToken>
+Content-Type: application/json
+
+{
+  "accessKey":     "35240112345678000195550010000001231000001230",
+  "issuerCnpj":    "12345678000195",
+  "recipientCnpj": "98765432000100",
+  "issuedAt":      "2024-01-15T10:30:00Z",
+  "totalAmount":   1500.00
+}
+```
+
+| Field           | Type   | Rules                                 |
+|-----------------|--------|---------------------------------------|
+| `accessKey`     | string | 44 digits, NF-e access key            |
+| `issuerCnpj`    | string | 14 digits, no formatting              |
+| `recipientCnpj` | string | 14 digits, no formatting              |
+| `issuedAt`      | string | ISO 8601 date                         |
+| `totalAmount`   | number | Positive, max 2 decimal places        |
+
+**202 Accepted** — invoice forwarded to Ingestion Service
+
+**400 Bad Request** — validation error
+
+```json
+{
+  "statusCode": 400,
+  "message": ["accessKey must match /^\\d{44}$/"],
+  "timestamp": "2026-05-02T12:00:00.000Z",
+  "path": "/invoices"
+}
+```
+
+**401 Unauthorized** — missing or invalid token
+
+**408 Request Timeout** — Ingestion Service did not respond within `PROXY_TIMEOUT_MS`
+
+**429 Too Many Requests** — rate limit exceeded
+
+---
+
+## Health
+
+### GET /health
+
+```http
+GET /health
+```
+
+**200 OK**
+
+```json
+{
+  "status": "ok",
+  "uptime": 42.3,
+  "timestamp": "2026-05-02T12:00:00.000Z"
+}
+```
