@@ -35,7 +35,7 @@ Client/ERP ──► API Gateway (NestJS) ──► Ingestion Service (Go) ─�
 **Why NestJS:**
 
 - Opinionated framework with native support for modules, dependency injection, and decorators — ideal for a well-organized gateway.
-- Mature ecosystem for authentication (Passport.js), validation (class-validator), documentation (Swagger/OpenAPI), and health checks.
+- Mature ecosystem for authentication (Passport.js), validation (class-validator), documentation (Swagger), and health checks.
 - TypeScript ensures type safety at the entry layer, where contract errors are most costly.
 - Native support for microservices transport (RabbitMQ, Redis, gRPC) if synchronous communication is needed in the future.
 

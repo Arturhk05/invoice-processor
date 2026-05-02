@@ -16,4 +16,10 @@ export default () => ({
     loginLimit: parseInt(process.env.THROTTLE_LOGIN_LIMIT ?? '5', 10),
     refreshLimit: parseInt(process.env.THROTTLE_REFRESH_LIMIT ?? '10', 10),
   },
+  ingestion: {
+    url: process.env.INGESTION_SERVICE_URL,
+  },
+  proxy: {
+    timeoutMs: parseInt(process.env.PROXY_TIMEOUT_MS ?? '5000', 10),
+  },
 });

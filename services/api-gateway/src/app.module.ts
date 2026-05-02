@@ -7,6 +7,7 @@ import configuration from './config/configuration.js';
 import { envValidationSchema } from './config/env.validation.js';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { ProxyModule } from './modules/proxy/proxy.module.js';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
       ],
     }),
     AuthModule,
+    ProxyModule,
   ],
   providers: [
     {
