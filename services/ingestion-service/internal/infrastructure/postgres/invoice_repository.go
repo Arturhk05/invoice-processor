@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Arturhk05/invoice-processor/services/ingestion-service/internal/application/port"
 	"github.com/Arturhk05/invoice-processor/services/ingestion-service/internal/domain/entity"
 	"github.com/Arturhk05/invoice-processor/services/ingestion-service/internal/domain/valueobject"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+var _ port.InvoiceRepository = (*InvoiceRepository)(nil)
 
 type InvoiceRepository struct {
 	pool *pgxpool.Pool
