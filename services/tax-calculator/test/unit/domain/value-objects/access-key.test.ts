@@ -35,7 +35,11 @@ describe('AccessKey', () => {
 
   describe('value', () => {
     it('exposes the raw digits', () => {
-      const key = AccessKey.create(VALID_KEY).value as AccessKey
+      const result = AccessKey.create(VALID_KEY)
+      expect(result.ok).toBe(true)
+      if (!result.ok) return
+
+      const key = result.value
       expect(key.value).toBe(VALID_KEY)
       expect(key.value).toHaveLength(44)
     })
