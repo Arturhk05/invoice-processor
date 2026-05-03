@@ -138,7 +138,6 @@ services/ingestion-service/
 - Fiscal calculation logic is complex, with many conditional rules (NCM, CFOP, CST, tax regimes). TypeScript with interfaces and types makes this manageable and refactorable.
 - Clean Architecture shines here: the fiscal domain is rich and needs complete isolation from infrastructure.
 - NPM ecosystem has good libraries for financial calculations (decimal.js for arbitrary precision, avoiding floating point).
-- This is the service that demonstrates **depth** in design patterns — it's where portfolio reviewers focus most attention.
 
 **Internal Technologies:**
 
